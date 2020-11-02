@@ -4,14 +4,14 @@
 #
 Name     : qml-box2d
 Version  : b7212d5640701f93f0cd88fbd3a32c619030ae62
-Release  : 2
+Release  : 3
 URL      : https://github.com/qml-box2d/qml-box2d/archive/b7212d5640701f93f0cd88fbd3a32c619030ae62.tar.gz
 Source0  : https://github.com/qml-box2d/qml-box2d/archive/b7212d5640701f93f0cd88fbd3a32c619030ae62.tar.gz
 Summary  : No detailed summary available
 Group    : Development/Tools
 License  : Zlib
-Requires: qml-box2d-lib
-Requires: qml-box2d-license
+Requires: qml-box2d-lib = %{version}-%{release}
+Requires: qml-box2d-license = %{version}-%{release}
 BuildRequires : buildreq-qmake
 BuildRequires : mesa-dev
 BuildRequires : pkgconfig(Qt5Quick)
@@ -21,18 +21,10 @@ The images in this demo are based on the illustrations in
 'Kunstformen der Natur' by Ernst Haeckel, which is in the public domain since
 its copyright expired.
 
-%package doc
-Summary: doc components for the qml-box2d package.
-Group: Documentation
-
-%description doc
-doc components for the qml-box2d package.
-
-
 %package lib
 Summary: lib components for the qml-box2d package.
 Group: Libraries
-Requires: qml-box2d-license
+Requires: qml-box2d-license = %{version}-%{release}
 
 %description lib
 lib components for the qml-box2d package.
@@ -48,30 +40,28 @@ license components for the qml-box2d package.
 
 %prep
 %setup -q -n qml-box2d-b7212d5640701f93f0cd88fbd3a32c619030ae62
+cd %{_builddir}/qml-box2d-b7212d5640701f93f0cd88fbd3a32c619030ae62
 
 %build
 export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
-export LANG=C
-%qmake
+export LANG=C.UTF-8
+export GCC_IGNORE_WERROR=1
+%qmake -config ltcg -config fat-static-lto
 test -r config.log && cat config.log
 make  %{?_smp_mflags}
 
 %install
-export SOURCE_DATE_EPOCH=1535409864
+export SOURCE_DATE_EPOCH=1604354460
 rm -rf %{buildroot}
-mkdir -p %{buildroot}/usr/share/doc/qml-box2d
-cp Box2D/License.txt %{buildroot}/usr/share/doc/qml-box2d/Box2D_License.txt
-cp COPYING %{buildroot}/usr/share/doc/qml-box2d/COPYING
+mkdir -p %{buildroot}/usr/share/package-licenses/qml-box2d
+cp %{_builddir}/qml-box2d-b7212d5640701f93f0cd88fbd3a32c619030ae62/Box2D/License.txt %{buildroot}/usr/share/package-licenses/qml-box2d/49e690840382ff08f0f147773502a82303b49620
+cp %{_builddir}/qml-box2d-b7212d5640701f93f0cd88fbd3a32c619030ae62/COPYING %{buildroot}/usr/share/package-licenses/qml-box2d/0bd52d9acdd2fd0a06578822b2a09356f7045b21
 %make_install
 
 %files
 %defattr(-,root,root,-)
-
-%files doc
-%defattr(0644,root,root,0755)
-%doc /usr/share/doc/qml\-box2d/*
 
 %files lib
 %defattr(-,root,root,-)
@@ -79,5 +69,6 @@ cp COPYING %{buildroot}/usr/share/doc/qml-box2d/COPYING
 /usr/lib64/qt5/qml/Box2D.2.0/qmldir
 
 %files license
-%defattr(-,root,root,-)
-/usr/share/doc/qml-box2d/COPYING
+%defattr(0644,root,root,0755)
+/usr/share/package-licenses/qml-box2d/0bd52d9acdd2fd0a06578822b2a09356f7045b21
+/usr/share/package-licenses/qml-box2d/49e690840382ff08f0f147773502a82303b49620
